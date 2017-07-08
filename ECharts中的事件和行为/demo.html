@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ECharts中的事件和行为</title>
+    <script src="../echarts.js"></script>
+    <style>
+        #container{
+            width: 600px; height: 600px;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+<script>
+    /*
+    *
+    *    ECharts 支持常规的鼠标事件类型
+    *       click, dblclick, mouserdown, mousemove, mouseup, mouseover, mouseout
+    *
+    *       绑定事件的方法很简单
+    *       myCharts.on('click', function(params){
+    *           //控制台打印数据的名称
+    *           console.log(params.name);
+    *       });
+    *
+    *       所有的鼠标事件包含params，这是一个包含了点击图形数据信息的对象，格式如下
+    *       {
+    *           componentType : string,
+    *           seriesType : string,
+    *           seriesIndex : number,
+    *           seriesName : string,
+    *           name : string,
+    *           dataIndex : string,
+    *           data : Object,
+    *           dataType : string,
+    *           value : number|Array,
+    *           color : string
+    *       }
+    *
+    * */
+
+    var myCharts = echarts.init( document.getElementById('container') );
+
+    var option = {
+        xAxis : {
+            data: ["衬衫", "羊毛衫", "雪纺衫", "裤子", "高跟鞋", "袜子"]
+        },
+        yAxis :{},
+        tooltip : {},
+        series : {
+            name : '销量',
+            type : 'bar',
+            data : [5, 20, 36, 10, 10, 20]
+        }
+    };
+    myCharts.setOption(option);
+
+    myCharts.on('click', function(parmas){
+        window.open( 'https://www.google.com/?q=' + encodeURIComponent(parmas.name) );
+    })
+
+
+</script>
+</body>
+</html>
