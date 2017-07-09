@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Drag</title>
+    <script src="../jquery-1.11.1.min.js"></script>
+    <script src="../echarts.js"></script>
+    <style>
+        #container{
+            width : 600px; height :600px;
+        }
+    </style>
+</head>
+<body>
+<div id="container"></div>
+<script>
+    var myCharts = echarts.init( document.getElementById('container') );
+    var symbolSize  = 20;
+    var data = [
+        [15, 0],
+        [-50, 10],
+        [-56.5, 20],
+        [-46.5, 30],
+        [-22.1, 40]
+    ];
+
+    myCharts.setOption({
+
+        xAxis : {
+            name : '横坐标',
+            nameTextStyle : {
+                fontStyle : 'normal'
+            },
+            min : -100,
+            max : 80,
+            type : 'value',
+            //坐标轴相关设置
+            axisLine : { onZero : false }
+        },
+        yAxis : {
+            name : '纵坐标',
+            min : -30,
+            max : 60,
+            type : 'value',
+            axisLine : { onZero : false }
+        },
+        series : [
+            {
+                id : 'a',
+                type : 'line',
+                smooth : false,  //是否为曲线平滑连接
+                symbolSize : symbolSize,
+                data : data
+            }
+        ],
+        tooltip : {
+            //不使用默认的显示开关
+            triggerOn : 'none',
+            formatter : function (params) {
+                return 'X : ' + params.data[0].toFixed(2) + '<br/>Y : ' + params.data[1].toFixed(2);
+            }
+        }
+    });
+
+    myCharts.setOption({
+        //声明一个 graphic组件，里面有若干个type为"circle"的graphic element
+        graphic : echarts.util.map(data, function (dataItem, dataIndex) {
+            return {
+                type : 'circle',
+                shape : {
+                    //圆点半径
+                    r : symbolSize / 2
+                },
+                position : myCharts.convertToPixel('grid', dataItem), //这段代码可以实现从data到像素坐标的转换
+                invisible : true,
+                draggable : true,
+                z : 100, //z-index
+                ondrag : echarts.util.curry(onPointDragging, dataIndex),
+
+                //在mousemove时打开，在mouseout时关闭
+                onmousemove : echarts.util.curry(showTooltip, dataIndex),
+                onmouseout : echarts.util.curry(hideTooltip, dataIndex)
+            };
+        })
+    });
+
+    function onPointDragging(dataIndex){
+        data[dataIndex] = myCharts.convertFromPixel('grid', this.position);
+        myCharts.setOption({
+            series : [
+                {
+                    id : 'a',
+                    data : data
+                }
+            ]
+        })
+    }
+
+    function showTooltip(dataIndex) {
+        myCharts.dispatchAction({
+            type : 'showTip',
+            seriesIndex : 0,
+            dataIndex : dataIndex
+        });
+    }
+
+    function  hideTooltip(dataIndex) {
+        myCharts.dispatchAction({
+            type : 'hideTip'
+        });
+    }
+
+    window.addEventListener('resize', function () {
+        myCharts.setOption({
+            graphic : echarts.util.map(data, function (item, dataIndex) {
+                return {
+                    position : myCharts.convertToPixel('grid', item)
+                };
+            })
+        })
+    })
+</script>
+</body>
+</html>
