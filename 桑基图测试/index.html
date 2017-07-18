@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://cdn.bootcss.com/echarts/3.6.2/echarts.min.js"></script>
+<style>
+    #mychart {
+        width: 1000px; height: 600px;
+    }
+</style>
+</head>
+<body>
+
+<div id="mychart"></div>
+<script>
+    if (!Array.prototype.map) {
+        Array.prototype.map = function(callback, thisArg) {
+
+            var T, A, k;
+
+            if (this == null) {
+                throw new TypeError(" this is null or not defined");
+            }
+            var O = Object(this);
+            var len = O.length >>> 0;
+            if (Object.prototype.toString.call(callback) != "[object Function]") {
+                throw new TypeError(callback + " is not a function");
+            }
+            if (thisArg) {
+                T = thisArg;
+            }
+            A = new Array(len);
+            k = 0;
+            while(k < len) {
+                var kValue, mappedValue;
+                if (k in O) {
+                    kValue = O[ k ];
+                    mappedValue = callback.call(T, kValue, k, O);
+                    A[ k ] = mappedValue;
+                }
+                k++;
+            }
+            return A;
+        };
+    }
+
+
+    var myCharts = echarts.init(document.getElementById('mychart'));
+    myCharts.showLoading();
+    $.get('datademo.json', function (data) {
+        myCharts.hideLoading();
+
+        myCharts.setOption(option = {
+            title: {
+                text: 'Sankey Diagram'
+            },
+            tooltip: {
+                trigger: 'item',
+                triggerOn: 'mousemove'
+
+            },
+            series: [
+                {
+                    type: 'sankey',
+                    layout:'none',
+                    data: data.nodes,
+                    links: data.links,
+                    itemStyle: {
+                        normal: {
+                            borderWidth: 1,
+                            borderColor: '#aaa'
+                        }
+                    },
+                    lineStyle: {
+                        normal: {
+                            curveness: 0.5
+                        }
+                    }
+                }
+            ]
+        });
+    });
+</script>
+</body>
+</html>

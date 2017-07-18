@@ -1,0 +1,15 @@
+{
+  "nodes":[
+    {"name" : "Total"},
+    {"name" : "sub1"},
+    {"name" : "sub2"},
+    {"name" : "sub11"},
+    {"name" : "sub12"}
+  ],
+  "links":[
+    { "source": "Total", "target" : "sub1" , "value" : 6 },
+    { "source": "sub1", "target" : "sub11", "value" : 3},
+    { "source": "sub1", "target" : "sub12", "value" : 3 },
+    { "source": "Total", "target" : "sub2" , "value" : 6}
+  ]
+}
